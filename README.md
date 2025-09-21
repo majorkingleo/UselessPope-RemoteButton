@@ -9,7 +9,8 @@
 * Selected Board: uPesy ESP32 Wroom DevKit
 
 # What it does
-* There is Button that can be pushed
+* There is Button that can be pushed, this action will send a UDB message via WLAN to the connected network.
+* The server can send a message how the NEO Pixel LED should blink.
 
 # GPIOs
 * GPIO32 NeoPixel PWM 1
@@ -17,3 +18,6 @@
 * GPIO25 NeoPixel PWM 3
 * GPIO3 Button
 
+# Debug Port
+* 115200 baud rate
+* 
