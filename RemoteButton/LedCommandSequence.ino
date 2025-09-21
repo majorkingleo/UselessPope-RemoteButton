@@ -5,19 +5,28 @@ bool LedCommandSequence::parse( String command )
     static const char *LED_COMMAND = "LED=";
     static const unsigned short LED_COMMAND_SIZE = strlen(LED_COMMAND);
 
-    int pos = command.indexOf( LED_COMMAND );
+    /*
+    Serial.write( ">" );
+    Serial.write( command.c_str() );
+    Serial.write( "<\n" );
+    */
 
-    Serial.write("found");
+    int pos = command.indexOf( LED_COMMAND ); 
 
     if( pos < 0 ) {
+      //  Serial.write("not found");
       return false;
     }
 
     command = command.substring( pos + LED_COMMAND_SIZE );
 
-    command = command.substring(pos,-1);
+    command = command.substring(0,-1);
 
+    /*    
+    Serial.write( ">" );
     Serial.write(command.c_str());
+    Serial.write( "<\n" );
+    */
 
     for( unsigned idx = 0; idx + 8 < command.length(); idx += 8 ) {
       commands.clear();
@@ -29,9 +38,9 @@ bool LedCommandSequence::parse( String command )
 
   bool LedCommandSequence::parseOneCommand( const String & command )
   {
-    Serial.write( ">" );
-    Serial.write( command.c_str() );
-    Serial.write( "<\n" );
+    // Serial.write( ">" );
+    // Serial.write( command.c_str() );
+    // Serial.write( "<\n" );
 
     // RRGGBBDD
     if( command.length() < 8 ) {      
@@ -39,18 +48,19 @@ bool LedCommandSequence::parse( String command )
     }
 
     Command cmd;
-    if( getColor( cmd.red,   command.substring(0,2) ) ) {
+    if( !getColor( cmd.red,   command.substring(0,2) ) ) {
       return false;
     }
   
-    if( getColor( cmd.green, command.substring(2,4) ) ) {
+    if( !getColor( cmd.green, command.substring(2,4) ) ) {
       return false;
     }
 
-    if( getColor( cmd.blue,  command.substring(4,6) ) ) {
+    if( !getColor( cmd.blue,  command.substring(4,6) ) ) {
       return false;
     }
-    if( getDelay( cmd.delay, command.substring(6,8) ) ) {
+
+    if( !getDelay( cmd.delay, command.substring(6,10) ) ) {
       return false;
     }
 
@@ -65,6 +75,14 @@ bool LedCommandSequence::parse( String command )
       return false;
     }
 
+    /*
+      Serial.write("color parsed from >");
+      Serial.write(code.c_str());
+      Serial.write("< to ");
+      Serial.write((int)color);
+      Serial.write("\n");
+    */
+    
     return true;
   }
 

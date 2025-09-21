@@ -22,7 +22,9 @@ void CommandClient::operator()()
   if( client.available() ) {
     String new_data = client.readString();
 
-    if( new_data.indexOf("\n\n") != -1 ) {
+    if( ( new_data.indexOf("\n\n") != -1 ) ||
+        ( new_data.indexOf("\r\n\r\n") != -1 ) ) 
+    {
       Serial.write( "Sending response\n" );
       client.println("HTTP/1.1 200 OK");
       client.println("Content-type:text/html");
@@ -44,12 +46,17 @@ void CommandClient::operator()()
       continue;
     }
 
+    /*
     Serial.write(line.c_str());
 
     if( !line.endsWith( "\n" ) ) {
       Serial.write("\n");
     }
+    */
 
-    commands.parse(line);
+    if( commands.parse(line) ) {
+      client.println("OK\n");
+      client.stop();
+    }
   }
 }

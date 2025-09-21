@@ -11,25 +11,43 @@
 #include <LedCommandSequence.h>
 #include <CountButton.h>
 #include <CommandClient.h>
+#include <MultiWiFi.h>
 
 const unsigned PIN_BUTTON_BOOT_0 = 0;
 const unsigned PIN_BUTTON = 19;
 const unsigned PIN_LED1 = 32;
 
+
+
+void initMultiWiFi() 
+{
+  MultiWiFi multi_wifi;
+
+  WiFi.mode(WIFI_STA);
+  multi_wifi.add("TKZiegelstrasseSlow", "internet");
+  multi_wifi.add("TKZiegelstrasseFast", "internet");
+
+  Serial.print("Connecting to WiFi ..");
+  if(multi_wifi.run() != WL_CONNECTED) {
+    Serial.print('cannot connect to Wifi');
+  }
+  Serial.print("wifi: "); Serial.println(WiFi.localIP().toString());
+  Serial.print("mac:  "); Serial.println(WiFi.macAddress()); 
+}
+
 void initWiFi() 
 {
   WiFi.mode(WIFI_STA);
-  WiFi.begin("TKZiegelstrasseSlow", "internet");
+  WiFi.begin("TKZiegelstrasseFast", "internet");
+
   Serial.print("Connecting to WiFi ..");
-  while (WiFi.status() != WL_CONNECTED) {
+  while(WiFi.status() != WL_CONNECTED) {
     Serial.print('.');
     delay(1000);
   }
   Serial.print("wifi: "); Serial.println(WiFi.localIP().toString());
   Serial.print("mac:  "); Serial.println(WiFi.macAddress()); 
 }
-
-
 
 //CountButton button_boot( PIN_BUTTON_BOOT_0 );
 CountButton button_boot( PIN_BUTTON );
@@ -47,6 +65,8 @@ void setup() {
   led1.show();
 
   initWiFi();
+  //initMultiWiFi();
+
   server.begin();
   server.setNoDelay(true);
 }
