@@ -8,98 +8,13 @@
 #include <WiFiServer.h>
 #include <WiFiType.h>
 #include <WiFiUdp.h>
-#include <Adafruit_NeoPixel.h>
+#include <LedCommandSequence.h>
+#include <CountButton.h>
+#include <CommandClient.h>
 
 const unsigned PIN_BUTTON_BOOT_0 = 0;
 const unsigned PIN_BUTTON = 19;
 const unsigned PIN_LED1 = 32;
-
-class Button
-{
-  enum STATE {
-    STATE_NOT_PRESSED = 0,
-    STATE_PRESSED 
-  };
-
-  STATE state = STATE_NOT_PRESSED;
-  bool state_changed = false;
-  int  pin;
-public:
-
-  Button( int pin_ )
-  : pin( pin_ )
-  {}
-
-  int get_pin() const { return pin; }
-
-  virtual void gather()
-  {
-    STATE pin_data;
-    
-    if( digitalRead(pin) > 0 ) {
-      pin_data = STATE_PRESSED;
-    } else {
-      pin_data = STATE_NOT_PRESSED;
-    }
-
-    if( state != pin_data ) {
-      state_changed = true;
-      state = pin_data;
-    }
-  }
-
-  bool did_button_changed_state() const {
-    return state_changed;
-  }
-
-  bool was_button_pressed() const {
-    if( state == STATE_PRESSED ) {
-      return true;
-    }
-
-    return false;
-  }
-
-  void reset() {
-    state_changed = false;
-  }
-};
-
-class CountButton : public Button
-{
-  int count_start;
-  int count_end;
-  int count;
-
-  public:
-  CountButton( int pin_, int count_start_ = 0, int count_end_ = 1 )
-  : Button( pin_ ),
-  count_start( count_start_ ),
-  count_end( count_end_ ),
-  count( count_start_ )
-  {}
-
-  void gather() override
-  {
-    Button::gather();
-
-    if( did_button_changed_state() ) {
-      if( was_button_pressed() ) {
-        count = count+1;
-
-        if( count > count_end ) {
-          count = count_start;
-        }
-      } else {
-        reset();
-      }
-    }
-  }
-
-  int get_count() const {
-    return count;
-  }
-};
 
 void initWiFi() 
 {
@@ -111,13 +26,17 @@ void initWiFi()
     delay(1000);
   }
   Serial.print("wifi: "); Serial.println(WiFi.localIP().toString());
-  Serial.print("mac:  "); Serial.println(WiFi.macAddress());
+  Serial.print("mac:  "); Serial.println(WiFi.macAddress()); 
 }
+
+
 
 //CountButton button_boot( PIN_BUTTON_BOOT_0 );
 CountButton button_boot( PIN_BUTTON );
-
+WiFiServer server(80); // Port 80
 Adafruit_NeoPixel led1(1,PIN_LED1);
+LedCommandSequence commands(led1);
+CommandClient client( server, commands );
 
 void setup() {
   Serial.begin(115200);
@@ -128,6 +47,8 @@ void setup() {
   led1.show();
 
   initWiFi();
+  server.begin();
+  server.setNoDelay(true);
 }
 
 void loop() {
@@ -142,15 +63,17 @@ void loop() {
 
       if( button_boot.get_count() == 0 ) {
         Serial.write( "PIN_WEICHE_1, LOW\n" );
-        led1.setPixelColor(0,255,255,255);
+        led1.setPixelColor(0,255,100,100);
         led1.show();
 
       } else {
         Serial.write( "PIN_WEICHE_2, LOW\n" );
-        led1.setPixelColor(0,255,255,255);
+        led1.setPixelColor(0,0,0,0);
         led1.show();
       }
   }
+
+  client();
 
   delay(50);
 
