@@ -8,9 +8,11 @@
 #include <WiFiServer.h>
 #include <WiFiType.h>
 #include <WiFiUdp.h>
+#include <Adafruit_NeoPixel.h>
 
 const unsigned PIN_BUTTON_BOOT_0 = 0;
-const unsigned PIN_BUTTON = 3;
+const unsigned PIN_BUTTON = 19;
+const unsigned PIN_LED1 = 32;
 
 class Button
 {
@@ -115,10 +117,16 @@ void initWiFi()
 //CountButton button_boot( PIN_BUTTON_BOOT_0 );
 CountButton button_boot( PIN_BUTTON );
 
+Adafruit_NeoPixel led1(1,PIN_LED1);
+
 void setup() {
   Serial.begin(115200);
   pinMode(button_boot.get_pin(),INPUT);
-    
+  pinMode(PIN_LED1,OUTPUT);
+  led1.begin();
+  led1.setPixelColor(0,150,0,0);
+  led1.show();
+
   initWiFi();
 }
 
@@ -134,10 +142,13 @@ void loop() {
 
       if( button_boot.get_count() == 0 ) {
         Serial.write( "PIN_WEICHE_1, LOW\n" );
+        led1.setPixelColor(0,255,255,255);
+        led1.show();
 
       } else {
         Serial.write( "PIN_WEICHE_2, LOW\n" );
-        
+        led1.setPixelColor(0,255,255,255);
+        led1.show();
       }
   }
 
