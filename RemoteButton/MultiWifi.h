@@ -8,7 +8,15 @@
 
 #include <vector>
 
-class MultiWiFi {
+class MultiWiFi 
+{
+    struct Network_t {
+        String ssid;
+        String pass;
+    };
+
+    std::vector<Network_t> networks;
+
 public:
 
     void add(const char* ssid, const char *pass = NULL) 
@@ -23,12 +31,8 @@ public:
 
     int run(unsigned long connectTimeout = 5000);
 
-    private:
-    struct Network_t {
-        String ssid;
-        String pass;
-    };
-    std::vector<Network_t> networks;
+private:
+    bool is_connection_in_progress( uint8_t status ) const;
 };
 
 #endif

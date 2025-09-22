@@ -28,7 +28,7 @@ void initMultiWiFi()
   multi_wifi.add("TKZiegelstrasseFast", "internet");
 
   Serial.print("Connecting to WiFi ..");
-  if(multi_wifi.run() != WL_CONNECTED) {
+  while(multi_wifi.run() != WL_CONNECTED) {
     Serial.print('cannot connect to Wifi');
   }
   Serial.print("wifi: "); Serial.println(WiFi.localIP().toString());
@@ -64,8 +64,8 @@ void setup() {
   led1.setPixelColor(0,150,0,0);
   led1.show();
 
-  initWiFi();
-  //initMultiWiFi();
+  //initWiFi();
+  initMultiWiFi();
 
   server.begin();
   server.setNoDelay(true);
@@ -94,7 +94,5 @@ void loop() {
   }
 
   client();
-
-  delay(50);
 
 }
