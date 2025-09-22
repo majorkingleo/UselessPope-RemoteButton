@@ -1,32 +1,16 @@
 #include "LedCommandSequence.h"
 
 bool LedCommandSequence::parse( String command )
-  {
-    static const char *LED_COMMAND = "LED=";
-    static const unsigned short LED_COMMAND_SIZE = strlen(LED_COMMAND);
-
-    /*
-    Serial.write( ">" );
-    Serial.write( command.c_str() );
-    Serial.write( "<\n" );
-    */
-
-    int pos = command.indexOf( LED_COMMAND ); 
+  {    
+    int pos = command.indexOf( COMMAND.c_str() ); 
 
     if( pos < 0 ) {
-      //  Serial.write("not found");
       return false;
     }
 
-    command = command.substring( pos + LED_COMMAND_SIZE );
+    command = command.substring( pos + COMMAND.length() );
 
     command = command.substring(0,-1);
-
-    /*    
-    Serial.write( ">" );
-    Serial.write(command.c_str());
-    Serial.write( "<\n" );
-    */
 
     for( unsigned idx = 0; idx + 8 < command.length(); idx += 8 ) {
       commands.clear();

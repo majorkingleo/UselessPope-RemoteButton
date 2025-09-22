@@ -15,11 +15,13 @@ public:
 private:
   std::vector<Command> commands;
   Adafruit_NeoPixel & led;
+  const String COMMAND;
 
 public:
 
-  LedCommandSequence( Adafruit_NeoPixel & led_ )
-  : led( led_ )
+  LedCommandSequence( Adafruit_NeoPixel & led_, const String & command_ )
+  : led( led_ ),
+    COMMAND( command_ )
   {
 
   }

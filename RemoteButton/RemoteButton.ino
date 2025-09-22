@@ -53,7 +53,7 @@ void initWiFi()
 CountButton button_boot( PIN_BUTTON );
 WiFiServer server(80); // Port 80
 Adafruit_NeoPixel led1(1,PIN_LED1);
-LedCommandSequence commands(led1);
+LedCommandSequence commands(led1, "SetButtonPressed=" );
 CommandClient client( server, commands );
 
 void setup() {
