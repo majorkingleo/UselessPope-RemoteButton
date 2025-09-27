@@ -83,16 +83,17 @@ void loop() {
 
       if( button_boot.get_count() == 0 ) {
         Serial.write( "PIN_WEICHE_1, LOW\n" );
-        led1.setPixelColor(0,255,100,100);
+        led1.setPixelColor(0,100,000,60,60);
         led1.show();
 
       } else {
         Serial.write( "PIN_WEICHE_2, LOW\n" );
-        led1.setPixelColor(0,0,0,0);
+        led1.setPixelColor(0,0,0,100,60);
         led1.show();
       }
   }
 
   client();
 
+  //delay(50);
 }

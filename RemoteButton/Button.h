@@ -11,6 +11,9 @@ class Button
   STATE state = STATE_NOT_PRESSED;
   bool state_changed = false;
   int  pin;
+  unsigned long last_check = 0;
+  static constexpr const unsigned long rebounce_time = 30;
+
 public:
 
   Button( int pin_ )

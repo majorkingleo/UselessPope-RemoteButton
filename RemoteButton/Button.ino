@@ -3,6 +3,10 @@
 void Button::gather()
 {
   STATE pin_data;
+
+  if( last_check + rebounce_time > millis() ) {
+    return;
+  }
   
   if( digitalRead(pin) > 0 ) {
     pin_data = STATE_PRESSED;
@@ -14,4 +18,6 @@ void Button::gather()
     state_changed = true;
     state = pin_data;
   }
+
+  last_check = millis();
 }
