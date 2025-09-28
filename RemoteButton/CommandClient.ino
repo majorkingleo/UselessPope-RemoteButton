@@ -26,7 +26,7 @@ void CommandClient::operator()()
         ( new_data.indexOf("\r\n\r\n") != -1 ) ) 
     {
       Serial.write( "Sending response\n" );
-      client.println("HTTP/1.1 200 OK");
+      client.println("HTTP/1.0 200 OK");
       client.println("Content-type:text/html");
       client.println("done\n");
       client.println();
