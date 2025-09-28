@@ -7,11 +7,11 @@ void Button::gather()
   if( last_check + rebounce_time > millis() ) {
     return;
   }
-  
+
   if( digitalRead(pin) > 0 ) {
-    pin_data = STATE_PRESSED;
+    pin_data = inverted ? STATE_NOT_PRESSED : STATE_PRESSED;
   } else {
-    pin_data = STATE_NOT_PRESSED;
+    pin_data = inverted ? STATE_PRESSED : STATE_NOT_PRESSED;
   }
 
   if( state != pin_data ) {

@@ -12,16 +12,23 @@ public:
     uint8_t         blue;
     unsigned short  delay;
   };
-private:
+protected:
   std::vector<Command> commands;
   Adafruit_NeoPixel & led;
   const String COMMAND;
+  const unsigned LED_IDX;
+
+  bool          playing = false;
+  unsigned      playing_idx = 0;
+  unsigned long playing_millis_next = 0;
+
 
 public:
 
-  LedCommandSequence( Adafruit_NeoPixel & led_, const String & command_ )
+  LedCommandSequence( Adafruit_NeoPixel & led_, unsigned led_idx_, const String & command_ )
   : led( led_ ),
-    COMMAND( command_ )
+    COMMAND( command_ ),
+    LED_IDX( led_idx_ )
   {
 
   }
@@ -33,5 +40,9 @@ public:
   bool getColor( uint8_t & color, String code );
 
   bool getDelay( unsigned short & delay, String code );
+
+  void play();
+
+  void operator()();
 };
 #endif

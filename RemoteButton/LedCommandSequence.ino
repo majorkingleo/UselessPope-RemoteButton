@@ -78,3 +78,32 @@ bool LedCommandSequence::parse( String command )
 
     return true;
   }
+
+  void LedCommandSequence::play()
+  {
+    playing     = true;
+    playing_idx = 0;
+    playing_millis_next = 0;
+  }
+
+  void LedCommandSequence::operator()()
+  {
+    if( !playing ) {
+      return;
+    }
+
+    if( playing_millis_next < millis() ) {
+      if( playing_idx >= commands.size() ) {
+        playing_idx = 0;
+        playing = false;
+        return;
+      }
+
+      Command & cmd = commands.at(playing_idx);
+
+      led.setPixelColor( LED_IDX, cmd.red, cmd.green, cmd.blue );
+      led.show();
+      playing_millis_next = millis() + cmd.delay;
+      playing_idx++;
+    }
+  }

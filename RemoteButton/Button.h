@@ -13,6 +13,7 @@ class Button
   int  pin;
   unsigned long last_check = 0;
   static constexpr const unsigned long rebounce_time = 30;
+  bool inverted = false;
 
 public:
 
@@ -38,6 +39,10 @@ public:
 
   void reset() {
     state_changed = false;
+  }
+
+  void set_inverted( bool is_inverted ) {
+    inverted = is_inverted;
   }
 };
 #endif

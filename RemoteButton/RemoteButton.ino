@@ -12,6 +12,7 @@
 #include <CountButton.h>
 #include <CommandClient.h>
 #include <MultiWiFi.h>
+#include <CommandSetButtonPressedLights.h>
 
 const unsigned PIN_BUTTON_BOOT_0 = 0;
 const unsigned PIN_BUTTON = 19;
@@ -50,15 +51,15 @@ void initWiFi()
 }
 
 //CountButton button_boot( PIN_BUTTON_BOOT_0 );
-CountButton button_boot( PIN_BUTTON );
+Button button( PIN_BUTTON );
 WiFiServer server(80); // Port 80
 Adafruit_NeoPixel led1(1,PIN_LED1);
-LedCommandSequence commands(led1, "SetButtonPressedLights=" );
-CommandClient client( server, commands );
+CommandSetButtonPressedLights command_set_button_pressed_lights(led1, 0 );
+CommandClient client( server );
 
 void setup() {
   Serial.begin(115200);
-  pinMode(button_boot.get_pin(),INPUT);
+  pinMode(button.get_pin(),INPUT);
   pinMode(PIN_LED1,OUTPUT);
   led1.begin();
   led1.setPixelColor(0,150,0,0);
@@ -69,31 +70,40 @@ void setup() {
 
   server.begin();
   server.setNoDelay(true);
+
+  client.add( &command_set_button_pressed_lights );
+
+  button.set_inverted( true );
 }
 
 void loop() {
 
-  button_boot.gather();
+  button.gather();
 
-  if( button_boot.did_button_changed_state() ) {
-      char acBuffer[10];
-      sprintf( acBuffer, "Weiche %d\n", button_boot.get_count() );
-      Serial.write( acBuffer );
-      button_boot.reset();
+  if( button.did_button_changed_state() ) {
 
-      if( button_boot.get_count() == 0 ) {
-        Serial.write( "PIN_WEICHE_1, LOW\n" );
-        led1.setPixelColor(0,100,000,60,60);
-        led1.show();
+      button.reset();
+
+      if( button.was_button_pressed() ) {
+        Serial.write( "pressed\n" );
+
+        command_set_button_pressed_lights.play();
+        //led1.setPixelColor(0,100,000,60,60);
+        //led1.show();
 
       } else {
-        Serial.write( "PIN_WEICHE_2, LOW\n" );
-        led1.setPixelColor(0,0,0,100,60);
-        led1.show();
+        Serial.write( "released\n" );
+
+        //led1.setPixelColor(0,0,0,100,60);
+        //led1.show();
+
       }
+
   }
 
+  command_set_button_pressed_lights();
   client();
+  
 
   //delay(50);
 }

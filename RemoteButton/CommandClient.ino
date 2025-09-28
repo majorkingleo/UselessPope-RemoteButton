@@ -54,9 +54,12 @@ void CommandClient::operator()()
     }
     */
 
-    if( commands.parse(line) ) {
-      client.println("OK\n");
-      client.stop();
+    for( auto command : commands ) {
+      if( command->parse(line) ) {
+        client.println("OK\n");
+        client.stop();
+        break;
+      }
     }
   }
 }
