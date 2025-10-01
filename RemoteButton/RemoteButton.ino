@@ -20,22 +20,6 @@ const unsigned PIN_LED1 = 32;
 
 
 
-void initMultiWiFi() 
-{
-  MultiWiFi multi_wifi;
-
-  WiFi.mode(WIFI_STA);
-  multi_wifi.add("TKZiegelstrasseSlow", "internet");
-  multi_wifi.add("TKZiegelstrasseFast", "internet");
-
-  Serial.print("Connecting to WiFi ..");
-  while(multi_wifi.run() != WL_CONNECTED) {
-    Serial.print('cannot connect to Wifi');
-  }
-  Serial.print("wifi: "); Serial.println(WiFi.localIP().toString());
-  Serial.print("mac:  "); Serial.println(WiFi.macAddress()); 
-}
-
 void initWiFi() 
 {
   WiFi.mode(WIFI_STA);
@@ -57,12 +41,33 @@ Adafruit_NeoPixel led1(1,PIN_LED1);
 CommandSetButtonPressedLights command_set_button_pressed_lights(led1, 0 );
 CommandClient client( server );
 
+void initMultiWiFi() 
+{
+  MultiWiFi multi_wifi;
+
+  WiFi.mode(WIFI_STA);
+  multi_wifi.add("TKZiegelstrasseSlow", "internet");
+  multi_wifi.add("TKZiegelstrasseFast", "internet");
+
+  Serial.print("Connecting to WiFi ..");
+  while(multi_wifi.run() != WL_CONNECTED) {
+    Serial.print('cannot connect to Wifi');
+    led1.setPixelColor( 0, 100, 0, 0 );
+    led1.show();
+    delay(500);
+  }
+  Serial.print("wifi: "); Serial.println(WiFi.localIP().toString());
+  Serial.print("mac:  "); Serial.println(WiFi.macAddress()); 
+  led1.setPixelColor( 0, 0, 100, 0 );
+  led1.show();
+}
+
 void setup() {
   Serial.begin(115200);
   pinMode(button.get_pin(),INPUT);
   pinMode(PIN_LED1,OUTPUT);
   led1.begin();
-  led1.setPixelColor(0,150,0,0);
+  led1.setPixelColor(0,100,100,0);
   led1.show();
 
   //initWiFi();
