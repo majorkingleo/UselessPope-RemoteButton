@@ -40,6 +40,7 @@ WiFiServer server(80); // Port 80
 Adafruit_NeoPixel led1(1,PIN_LED1);
 CommandSetButtonPressedLights command_set_button_pressed_lights(led1, 0 );
 CommandClient client( server );
+WiFiUDP Udp;
 
 void initMultiWiFi() 
 {
@@ -90,6 +91,11 @@ void loop() {
       button.reset();
 
       if( button.was_button_pressed() ) {
+        Udp.beginPacket("192.168.1.19",22000);
+        const String msg = WiFi.macAddress() + ";Action=ButtonPressed\n";
+        Udp.write(reinterpret_cast<const uint8_t*>(msg.c_str()),msg.length());
+        Udp.endPacket();
+
         Serial.write( "pressed\n" );
 
         command_set_button_pressed_lights.play();
@@ -98,6 +104,10 @@ void loop() {
 
       } else {
         Serial.write( "released\n" );
+        Udp.beginPacket("192.168.1.19",22000);
+        const String msg = WiFi.macAddress() + ";Action=ButtonPressed\n";
+        Udp.write(reinterpret_cast<const uint8_t*>(msg.c_str()),msg.length());
+        Udp.endPacket();
 
         //led1.setPixelColor(0,0,0,100,60);
         //led1.show();
