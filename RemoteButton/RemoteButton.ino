@@ -6,13 +6,13 @@
 #include <WiFiSTA.h>
 #include <WiFiScan.h>
 #include <WiFiServer.h>
-#include <WiFiType.h>
-#include <WiFiUdp.h>
 #include <LedCommandSequence.h>
 #include <CountButton.h>
 #include <CommandClient.h>
 #include <MultiWiFi.h>
 #include <CommandSetButtonPressedLights.h>
+#include <SendAction.h>
+#include <optional>
 
 const unsigned PIN_BUTTON_BOOT_0 = 0;
 const unsigned PIN_BUTTON = 19;
@@ -40,7 +40,7 @@ WiFiServer server(80); // Port 80
 Adafruit_NeoPixel led1(1,PIN_LED1);
 CommandSetButtonPressedLights command_set_button_pressed_lights(led1, 0 );
 CommandClient client( server );
-WiFiUDP Udp;
+std::optional<SendAction> send_action;
 
 void initMultiWiFi() 
 {
@@ -59,6 +59,9 @@ void initMultiWiFi()
   }
   Serial.print("wifi: "); Serial.println(WiFi.localIP().toString());
   Serial.print("mac:  "); Serial.println(WiFi.macAddress()); 
+
+  send_action.emplace();
+
   led1.setPixelColor( 0, 0, 100, 0 );
   led1.show();
 }
@@ -91,11 +94,7 @@ void loop() {
       button.reset();
 
       if( button.was_button_pressed() ) {
-        Udp.beginPacket("192.168.1.19",22000);
-        const String msg = WiFi.macAddress() + ";Action=ButtonPressed\n";
-        Udp.write(reinterpret_cast<const uint8_t*>(msg.c_str()),msg.length());
-        Udp.endPacket();
-
+        send_action->send("ButtonPressed");
         Serial.write( "pressed\n" );
 
         command_set_button_pressed_lights.play();
@@ -103,12 +102,8 @@ void loop() {
         //led1.show();
 
       } else {
+        send_action->send("ButtonReleased");
         Serial.write( "released\n" );
-        Udp.beginPacket("192.168.1.19",22000);
-        const String msg = WiFi.macAddress() + ";Action=ButtonPressed\n";
-        Udp.write(reinterpret_cast<const uint8_t*>(msg.c_str()),msg.length());
-        Udp.endPacket();
-
         //led1.setPixelColor(0,0,0,100,60);
         //led1.show();
 
