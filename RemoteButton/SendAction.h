@@ -13,6 +13,8 @@ private:
   const String macAddress{};
 
   std::set<IPAddress> server_ips{};
+
+  unsigned long count = 0;
 public:
 
   SendAction();

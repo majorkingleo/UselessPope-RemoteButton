@@ -112,8 +112,11 @@ void loop() {
   }
 
   command_set_button_pressed_lights();
-  client();
+  std::optional<IPAddress> o_connection = client();
   
+  if( o_connection ) {
+    send_action->add_server_ip( *o_connection );
+  }
 
   //delay(50);
 }

@@ -4,6 +4,7 @@
 #include <WiFiClient.h>
 #include <WiFiServer.h>
 #include <LedCommandSequence.h>
+#include <optional>
 
 class CommandClient
 {
@@ -22,7 +23,7 @@ public:
     commands.push_back( command );
   }
 
-  void operator()();
+  std::optional<IPAddress> operator()();
 };
 
 #endif

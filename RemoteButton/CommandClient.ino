@@ -1,22 +1,25 @@
 #include "CommandClient.h"
 
-void CommandClient::operator()()
+std::optional<IPAddress> CommandClient::operator()()
 {
+  std::optional<IPAddress> ret;
+
   if( !client ) {
     client = server.accept();
     if( !client ) {
-      return;
+      return {};
     }
 
-    data.clear();
+    data.clear();    
     Serial.write( "new connection\n" );
+    ret = client.remoteIP();
   }
 
   if( !client.connected() ) {
     client.stop();
     data.clear();
     Serial.write( "connection endet\n" );
-    return;
+    return {};
   }
 
   if( client.available() ) {
@@ -62,4 +65,6 @@ void CommandClient::operator()()
       }
     }
   }
+
+  return ret;
 }
