@@ -1,5 +1,13 @@
 #include "LedCommandSequence.h"
 
+
+String LedCommandSequence::Command::to_string() const
+{
+  char acBuffer[50];
+  snprintf( acBuffer, sizeof(acBuffer), "%02X%02X%02X%04X", red, green, blue, delay);
+  return acBuffer;
+}
+
 bool LedCommandSequence::parse( String command )
   {    
     int pos = command.indexOf( COMMAND.c_str() ); 
@@ -9,11 +17,10 @@ bool LedCommandSequence::parse( String command )
     }
 
     command = command.substring( pos + COMMAND.length() );
-
     command = command.substring(0,-1);
+    commands.clear();
 
-    for( unsigned idx = 0; idx + 8 < command.length(); idx += 8 ) {
-      commands.clear();
+    for( unsigned idx = 0; idx + 8 < command.length(); idx += 8 ) {      
       parseOneCommand( command.substring(idx,idx+8) );
     }
 
@@ -28,6 +35,7 @@ bool LedCommandSequence::parse( String command )
 
     // RRGGBBDD
     if( command.length() < 8 ) {      
+      Serial.write("invalid command length");
       return false;
     }
 
@@ -47,6 +55,10 @@ bool LedCommandSequence::parse( String command )
     if( !getDelay( cmd.delay, command.substring(6,10) ) ) {
       return false;
     }
+
+    Serial.write( "command: " );
+    Serial.write( cmd.to_string().c_str() );
+    Serial.write( "\n" );
 
     commands.push_back( cmd );
 
@@ -100,6 +112,7 @@ bool LedCommandSequence::parse( String command )
       }
 
       Command & cmd = commands.at(playing_idx);
+      Serial.write(String("playing: "  + cmd.to_string() + "\n").c_str());
 
       led.setPixelColor( LED_IDX, cmd.red, cmd.green, cmd.blue );
       led.show();

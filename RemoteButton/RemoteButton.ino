@@ -39,6 +39,7 @@ Button button( PIN_BUTTON );
 WiFiServer server(80); // Port 80
 Adafruit_NeoPixel led1(1,PIN_LED1);
 CommandSetButtonPressedLights command_set_button_pressed_lights(led1, 0 );
+CommandSetButtonReleasedLights command_set_button_released_lights(led1, 0 );
 CommandClient client( server );
 std::optional<SendAction> send_action;
 
@@ -81,6 +82,7 @@ void setup() {
   server.setNoDelay(true);
 
   client.add( &command_set_button_pressed_lights );
+  client.add( &command_set_button_released_lights );
 
   button.set_inverted( true );
 }
@@ -104,6 +106,8 @@ void loop() {
       } else {
         send_action->send("ButtonReleased");
         Serial.write( "released\n" );
+
+        command_set_button_released_lights.play();
         //led1.setPixelColor(0,0,0,100,60);
         //led1.show();
 
@@ -112,6 +116,7 @@ void loop() {
   }
 
   command_set_button_pressed_lights();
+  command_set_button_released_lights();
   std::optional<IPAddress> o_connection = client();
   
   if( o_connection ) {

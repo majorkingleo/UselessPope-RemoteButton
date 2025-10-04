@@ -15,4 +15,17 @@ public:
   void set_default();
 };
 
+class CommandSetButtonReleasedLights : public LedCommandSequence
+{
+public:
+  CommandSetButtonReleasedLights(  Adafruit_NeoPixel & led_, unsigned led_idx_ )
+    : LedCommandSequence( led_, led_idx_, "SetButtonReleasedLights=" )
+  {
+    set_default();
+  }
+
+  void set_default();
+};
+
+
 #endif

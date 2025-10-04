@@ -11,6 +11,8 @@ public:
     uint8_t         green;
     uint8_t         blue;
     unsigned short  delay;
+
+    String to_string() const;
   };
 protected:
   std::vector<Command> commands;
