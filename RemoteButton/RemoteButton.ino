@@ -42,6 +42,7 @@ CommandSetButtonPressedLights command_set_button_pressed_lights(led1, 0 );
 CommandSetButtonReleasedLights command_set_button_released_lights(led1, 0 );
 CommandClient client( server );
 std::optional<SendAction> send_action;
+unsigned long last_ping_deadline = 0;
 
 void initMultiWiFi() 
 {
@@ -112,6 +113,11 @@ void loop() {
 
       }
 
+  }
+
+  if( last_ping_deadline < millis() ) {
+    last_ping_deadline = millis() + 10000;
+    send_action->send("Ping");
   }
 
   command_set_button_pressed_lights();
