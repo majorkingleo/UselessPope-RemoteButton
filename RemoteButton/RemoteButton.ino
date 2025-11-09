@@ -48,8 +48,7 @@ void initMultiWiFi()
   MultiWiFi multi_wifi;
 
   WiFi.mode(WIFI_STA);
-  multi_wifi.add("TKZiegelstrasseSlow", "internet");
-  multi_wifi.add("TKZiegelstrasseFast", "internet");
+  multi_wifi.add("TKPapst", "johannespaul");
 
   Serial.print("Connecting to WiFi ..");
   while(multi_wifi.run() != WL_CONNECTED) {
